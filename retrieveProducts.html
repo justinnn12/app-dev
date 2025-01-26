@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Retrieve Products{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Products</h1>
+<div>
+    {% if count == 0 %}
+    <p>There are no products.</p>
+    {% elif count == 1 %}
+    <p>There is 1 product.</p>
+    {% else %}
+    <p>There are {{ count }} products.</p>
+    {% endif %}
+</div>
+
+
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Remarks</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in product_list %}
+            <tr>
+                <td>{{ product.get_product_id() }}</td>
+                <td>
+                    {% if product.get_image_filename() %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.get_image_filename()) }}" alt="Product Image" style="max-width: 200px;">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                </td>
+                <td>{{ product.get_product_name() }}</td>
+                <td>{{ product.get_description() }}</td>
+                <td>${{ product.get_price() }}</td>
+                {% if product.get_category() == "Electronics" %}
+                <td>Electronics</td>
+                {% elif product.get_category() == "Clothing" %}
+                <td>Clothing</td>
+                {% elif product.get_category() == "Home" %}
+                <td>Home</td>
+                {% elif product.get_category() == "Other" %}
+                <td>Other</td>
+                {% endif %}
+                <td>{{ product.get_remarks() }}</td>
+
+
+                <td><a href="/updateProduct/{{product.get_product_id()}}" class="btn btn-warning">Update</a></td>
+
+                <td>
+                <form action="{{url_for('delete_product', id=product.get_product_id())}}" method="POST">
+
+                    <!-- Button to Open the Modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{product.get_product_id()}}">
+                        Delete
+                    </button>
+
+                    <!-- The Modal -->
+                    <div class="modal" id="myModal_{{product.get_product_id()}}">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title">Delete confirmation</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+
+                          <!-- Modal body -->
+                          <div class="modal-body">
+                            Are you sure you want to delete {{product.get_product_name()}} {{product.get_price()}}?
+                          </div>
+
+                          <!-- Modal footer -->
+                          <div class="modal-footer">
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                </form>
+
+                <form action="{{ url_for('add_to_cart', id=product.get_product_id()) }}" method="POST">
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
