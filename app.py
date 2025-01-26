@@ -52,8 +52,10 @@ def home():
         return render_template('retrieveProducts.html', count=len(product_list), product_list=product_list)
 
 
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+upload_folder = 'static/uploads/'
+if not os.path.exists(upload_folder):
+    os.makedirs(upload_folder)
+# app.config['UPLOAD_FOLDER'] = 'static/uploads/'
 
 
 @app.route('/createProduct', methods=['GET', 'POST'])
@@ -72,15 +74,12 @@ def create_product():
         last_product_id = db.get('last_product_id', 0)
 
         image_filename = None
-        if 'image' in request.files:  # Check if an image file is uploaded
+        if 'image' in request.files:
             file = request.files['image']
-            if file and file.filename:  # If a file is provided
-                image_filename = secure_filename(file.filename)
-                image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
-                try:
-                    file.save(image_path)  # Save the image to the uploads folder
-                except Exception as e:
-                    print(f"Error saving file {image_filename}: {e}")
+            if file and file.filename:
+                # Use the original filename directly
+                image_filename = file.filename
+                file.save(os.path.join('static/uploads/', image_filename))
 
         product = Product.Product(create_product_form.product_name.data,
                                   create_product_form.description.data,
