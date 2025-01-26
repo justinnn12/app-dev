@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th>Order ID</th>
+                <th>Image</th>
                 <th>Product Name</th>
                 <th>Price</th>
                 <th>Actions</th>
@@ -18,11 +19,18 @@
         {% for product in cart_list %}
             <tr>
                 <td>{{ product.get_product_id() }}</td>
+                <td>
+                    {% if product.get_image_filename() %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.get_image_filename()) }}" alt="Product Image" style="max-width: 200px;">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                </td>
                 <td>{{ product.get_product_name() }}</td>
                 <td>${{ product.get_price() }} </td>
                 <td>
                     <form action="{{ url_for('remove_from_cart', product_id=product.get_product_id()) }}" method="POST">
-                        <button type="submit">Remove</button> <!-- Button to remove item -->
+                        <button type="submit" class="btn btn-primary">Remove</button> <!-- Button to remove item -->
                     </form>
                 </td>
             </tr>

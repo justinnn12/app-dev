@@ -7,7 +7,6 @@ import shelve, Product, os
 app = Flask(__name__)
 
 
-
 class Order:
     _order_counter = 1  # Class-level counter for unique IDs
 
@@ -100,6 +99,7 @@ def create_product():
 
 @app.route('/retrieveProducts')
 def retrieve_products():
+    role = request.args.get('role', 'staff')
     product_dict = {}
     db = shelve.open('product.db', 'r')
     product_dict = db['Products']
@@ -110,7 +110,7 @@ def retrieve_products():
         product = product_dict.get(key)
         product_list.append(product)
 
-    return render_template('retrieveProducts.html', count=len(product_list), product_list=product_list)
+    return render_template('retrieveProducts.html', count=len(product_list), product_list=product_list, role=role)
 
 
 @app.route('/updateProduct/<int:id>/', methods=['GET', 'POST'])

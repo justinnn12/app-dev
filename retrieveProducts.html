@@ -2,7 +2,7 @@
 {% block title %}Library Loan System - Retrieve Products{% endblock %}
 
 {% block content %}
-<h1 class="display-4">Retrieve Products</h1>
+<h1 class="display-4">Home</h1>
 <div>
     {% if count == 0 %}
     <p>There are no products.</p>
@@ -13,6 +13,9 @@
     {% endif %}
 </div>
 
+<a href="{{ url_for('retrieve_products', role='customer' if role == 'staff' else 'staff') }}" class="btn btn-primary mb-3">
+    Switch to {{ 'Customer' if role == 'staff' else 'Staff' }} View
+</a>
 
 <div>
     <table class="table table-striped">
@@ -55,11 +58,12 @@
                 <td>{{ product.get_remarks() }}</td>
 
 
-                <td><a href="/updateProduct/{{product.get_product_id()}}" class="btn btn-warning">Update</a></td>
+<!--                <td><a href="/updateProduct/{{product.get_product_id()}}" class="btn btn-warning">Update</a></td>-->
 
                 <td>
+                {% if role == 'staff' %}
                 <form action="{{url_for('delete_product', id=product.get_product_id())}}" method="POST">
-
+                    <a href="/updateProduct/{{product.get_product_id()}}" class="btn btn-warning">Update</a>
                     <!-- Button to Open the Modal -->
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal_{{product.get_product_id()}}">
                         Delete
@@ -91,10 +95,12 @@
                       </div>
                     </div>
                 </form>
+                {% else %}
 
                 <form action="{{ url_for('add_to_cart', id=product.get_product_id()) }}" method="POST">
                     <button type="submit" class="btn btn-primary">Add to Cart</button>
                 </form>
+                {% endif %}
                 </td>
             </tr>
         {% endfor %}
